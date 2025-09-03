@@ -39,30 +39,39 @@ class RestConsumerTest {
     @Test
     @DisplayName("Validate the function testGet.")
     void validateTestGet() {
-
+        String body = """
+                {
+                  "code": "200_001",
+                  "data": true
+                }
+                """;
         mockBackEnd.enqueue(new MockResponse()
                 .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .setResponseCode(HttpStatus.OK.value())
-                .setBody("{\"state\" : \"ok\"}"));
-        var response = restConsumer.existsByDocument();
+                .setBody(body));
+        var response = restConsumer.userExistsByDocument("12345");
 
         StepVerifier.create(response)
-                .expectNextMatches(objectResponse -> objectResponse.getState().equals("ok"))
+                .expectNext(true)
                 .verifyComplete();
     }
 
     @Test
-    @DisplayName("Validate the function testPost.")
-    void validateTestPost() {
-
+    void shouldReturnFalseWhenUserDoesNotExist() {
+        String body = """
+                {
+                  "code": "200_001",
+                  "data": false
+                }
+                """;
         mockBackEnd.enqueue(new MockResponse()
-                .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .setResponseCode(HttpStatus.OK.value())
-                .setBody("{\"state\" : \"ok\"}"));
-        var response = restConsumer.testPost();
+                .setBody(body)
+                .addHeader("Content-Type", "application/json"));
 
-        StepVerifier.create(response)
-                .expectNextMatches(objectResponse -> objectResponse.getState().equals("ok"))
+        var result = restConsumer.userExistsByDocument("99999");
+
+        StepVerifier.create(result)
+                .expectNext(false)
                 .verifyComplete();
     }
 }

@@ -1,6 +1,7 @@
 package co.com.bancolombia.api;
 
-import co.com.bancolombia.model.loanapplication.exceptions.BootcampInvalidDocumentExceptionException;
+import co.com.bancolombia.model.loanapplication.exceptions.BootcampInvalidDocumentException;
+import co.com.bancolombia.model.loanapplication.exceptions.BootcampInvalidLoanTypeException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.common.lang.NonNullApi;
 import jakarta.validation.ConstraintViolation;
@@ -12,10 +13,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
-import org.yaml.snakeyaml.constructor.DuplicateKeyException;
 import reactor.core.publisher.Mono;
 
-import javax.management.relation.RoleNotFoundException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -54,9 +53,13 @@ public class GlobalExceptionHandler implements WebExceptionHandler {
                         .stream()
                         .map(ConstraintViolation::getMessage)
                         .toList();
-                buildResponseBody(body, ERROR_VALIDATION, "Validation error", errors);
+                buildResponseBody(body, ERROR_VALIDATION, null, errors);
             }
-            case BootcampInvalidDocumentExceptionException bootcampInvalidDocumentExceptionException-> {
+            case BootcampInvalidDocumentException bootcampInvalidDocumentExceptionException-> {
+                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
+                buildResponseBody(body, ERROR_VALIDATION, ex.getMessage(), null);
+            }
+            case BootcampInvalidLoanTypeException bootcampInvalidLoanTypeException-> {
                 exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
                 buildResponseBody(body, ERROR_VALIDATION, ex.getMessage(), null);
             }
@@ -69,9 +72,10 @@ public class GlobalExceptionHandler implements WebExceptionHandler {
         return writeResponse(exchange, body);
     }
 
-    private void buildResponseBody(Map<String, Object> body, String code, String message, @Nullable List<String> errors) {
+    private void buildResponseBody(Map<String, Object> body, String code, @Nullable  String message, @Nullable List<String> errors) {
         body.put(KEY_STATUS, code);
-        body.put(KEY_ERROR, message);
+        if(message !=null)
+            body.put(KEY_ERROR, message);
         if (errors != null && !errors.isEmpty()) {
             body.put(KEY_ERRORS, errors);
         }

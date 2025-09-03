@@ -1,6 +1,11 @@
 package co.com.bancolombia.config;
 
+import co.com.bancolombia.model.loanapplication.gateways.LoanApplicationRepository;
+import co.com.bancolombia.model.loanapplication.gateways.UserExistsByDocumentPort;
+import co.com.bancolombia.model.loanstatus.gateways.LoanStatusRepository;
+import co.com.bancolombia.model.loantype.gateways.LoanTypeRepository;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +34,26 @@ public class UseCasesConfigTest {
     @Configuration
     @Import(UseCasesConfig.class)
     static class TestConfig {
+
+        @Bean
+        public LoanApplicationRepository loanApplicationRepository() {
+            return Mockito.mock(LoanApplicationRepository.class);
+        }
+
+        @Bean
+        public LoanTypeRepository loanTypeRepository() {
+            return Mockito.mock(LoanTypeRepository.class);
+        }
+
+        @Bean
+        public LoanStatusRepository loanStatusRepository() {
+            return Mockito.mock(LoanStatusRepository.class);
+        }
+
+        @Bean
+        public UserExistsByDocumentPort userExistsByDocumentPort() {
+            return Mockito.mock(UserExistsByDocumentPort.class);
+        }
 
         @Bean
         public MyUseCase myUseCase() {

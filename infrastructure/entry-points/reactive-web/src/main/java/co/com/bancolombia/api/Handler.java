@@ -66,21 +66,8 @@ public class Handler {
                             .contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(response);
                 })
-                .doOnNext(dto -> log.info("Loan request created successfully"));
+                .doOnNext(dto -> log.info("Loan request created successfully"))
+                .doOnError(error -> log.error("Error while creating LoanApplication: {}", error.getMessage(), error));
     }
 
-    public Mono<ServerResponse> listenGETUseCase(ServerRequest serverRequest) {
-        // useCase.logic();
-        return ServerResponse.ok().bodyValue("");
-    }
-
-    public Mono<ServerResponse> listenGETOtherUseCase(ServerRequest serverRequest) {
-        // useCase2.logic();
-        return ServerResponse.ok().bodyValue("");
-    }
-
-    public Mono<ServerResponse> listenPOSTUseCase(ServerRequest serverRequest) {
-        // useCase.logic();
-        return ServerResponse.ok().bodyValue("");
-    }
 }

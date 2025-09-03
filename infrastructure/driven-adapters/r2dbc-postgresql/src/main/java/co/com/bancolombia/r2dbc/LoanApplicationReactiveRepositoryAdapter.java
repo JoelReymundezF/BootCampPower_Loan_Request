@@ -23,7 +23,8 @@ public class LoanApplicationReactiveRepositoryAdapter extends ReactiveAdapterOpe
 
     @Override
     public Mono<LoanApplication> save(LoanApplication loanApplication) {
-        return super.save(loanApplication);
+        return super.save(loanApplication)
+                .flatMap(saved -> findById(saved.getId()));
     }
 
     
