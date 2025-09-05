@@ -54,7 +54,7 @@ public class Handler {
                 .doOnNext(dto -> log.info("Received request to save Loan request"))
                 .flatMap(validationUtil::validate)
                 .map(loanApplicationMapper::toModel)
-                .flatMap(loanApplicationUseCase::saveLoanApplication)
+                .flatMap(loanApplicationUseCase::save)
                 .map(loanApplicationMapper::toResponse)
                 .flatMap(savedLoanApplicationDto -> {
                     ApiResponse<LoanApplicationDTO> response = new ApiResponse<>(

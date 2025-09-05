@@ -2,7 +2,6 @@ package co.com.bancolombia.api.config;
 
 import co.com.bancolombia.api.Handler;
 import co.com.bancolombia.api.RouterRest;
-import co.com.bancolombia.api.dto.LoanApplicationDTO;
 import co.com.bancolombia.api.helper.validation.ValidationUtil;
 import co.com.bancolombia.api.mapper.LoanApplicationMapper;
 import co.com.bancolombia.model.loanapplication.LoanApplication;
@@ -36,7 +35,7 @@ class ConfigTest {
 
     @Test
     void corsConfigurationShouldAllowOrigins() {
-        Mockito.when(loanApplicationUseCase.saveLoanApplication(Mockito.any()))
+        Mockito.when(loanApplicationUseCase.save(Mockito.any()))
                 .thenReturn(Mono.just(new LoanApplication()));
         webTestClient.post()
                 .uri("/api/v1/loanApplications")

@@ -6,10 +6,7 @@ import co.com.bancolombia.api.helper.validation.ValidationUtil;
 import co.com.bancolombia.api.mapper.LoanApplicationMapper;
 import co.com.bancolombia.model.loanapplication.LoanApplication;
 import co.com.bancolombia.usecase.loanapplication.LoanApplicationUseCase;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.MediaType;
@@ -19,7 +16,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -66,10 +62,10 @@ class RouterRestTest {
                 .identityDocument("123456789")
                 .build();
 
-
+        //no usar any usar lo que se requiere mapear
         when(validationUtil.validate(any(CreateLoanApplicationDTO.class))).thenReturn(Mono.just(createLoanApplicationDTO));
         when(loanApplicationMapper.toModel(any(CreateLoanApplicationDTO.class))).thenReturn(loanApplication);
-        when(loanApplicationUseCase.saveLoanApplication(any())).thenReturn(Mono.just(loanApplication));
+        when(loanApplicationUseCase.save(any())).thenReturn(Mono.just(loanApplication));
         when(loanApplicationMapper.toResponse(any())).thenReturn(loanApplicationDTO);
 
         webTestClient.post()

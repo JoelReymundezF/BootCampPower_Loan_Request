@@ -16,7 +16,7 @@ public class LoanApplicationUseCase {
     private final LoanTypeRepository loanTypeRepository;
     private final UserExistsByDocumentPort userPort;
 
-    public Mono<LoanApplication> saveLoanApplication(LoanApplication loanApplication) {
+    public Mono<LoanApplication> save(LoanApplication loanApplication) {//renombrar a save
         Mono<Boolean> userExistsMono = userPort.userExistsByDocument(loanApplication.getIdentityDocument());
         Mono<Boolean> loanTypeExistsMono = loanTypeRepository.existsById(loanApplication.getIdLoanType());
 
@@ -35,4 +35,7 @@ public class LoanApplicationUseCase {
                     return loanApplicationRepository.save(loanApplication);
                 });
     }
+
+
+    // agregar las validaciones de condiciones en un metodo nuevo
 }
