@@ -1,7 +1,7 @@
 package co.com.bancolombia.api.config;
 
-import co.com.bancolombia.api.Handler;
-import co.com.bancolombia.api.RouterRest;
+import co.com.bancolombia.api.LoanApplicationHandler;
+import co.com.bancolombia.api.LoanApplicationRouterRest;
 import co.com.bancolombia.api.helper.validation.ValidationUtil;
 import co.com.bancolombia.api.mapper.LoanApplicationMapper;
 import co.com.bancolombia.model.loanapplication.LoanApplication;
@@ -16,7 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
-@ContextConfiguration(classes = {RouterRest.class, Handler.class})
+@ContextConfiguration(classes = {LoanApplicationRouterRest.class, LoanApplicationHandler.class})
 @WebFluxTest
 @Import({CorsConfig.class, SecurityHeadersConfig.class})
 class ConfigTest {

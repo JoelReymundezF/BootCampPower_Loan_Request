@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ContextConfiguration(classes = {RouterRest.class, Handler.class})
+@ContextConfiguration(classes = {LoanApplicationRouterRest.class, LoanApplicationHandler.class})
 @WebFluxTest
 class RouterRestTest {
 

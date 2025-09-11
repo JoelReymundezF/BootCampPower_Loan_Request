@@ -50,7 +50,7 @@ class LoanApplicationUseCaseTest {
         when(loanTypeRepository.existsById(10)).thenReturn(Mono.just(true));
         when(loanApplicationRepository.save(any())).thenReturn(Mono.just(loanApplication));
         /// validar que el docuemnto exista , el id
-        StepVerifier.create(useCase.save(loanApplication))
+        StepVerifier.create(useCase.save(loanApplication, "123456"))
                 .expectNext(loanApplication)
                 .verifyComplete();
     }
@@ -60,7 +60,7 @@ class LoanApplicationUseCaseTest {
         when(userPort.userExistsByDocument("123456")).thenReturn(Mono.just(false));
         when(loanTypeRepository.existsById(10)).thenReturn(Mono.just(true));
 
-        StepVerifier.create(useCase.save(loanApplication))
+        StepVerifier.create(useCase.save(loanApplication, "123456"))
                 .expectError(BootcampInvalidDocumentException.class)
                 .verify();
     }
@@ -70,7 +70,7 @@ class LoanApplicationUseCaseTest {
         when(userPort.userExistsByDocument("123456")).thenReturn(Mono.just(true));
         when(loanTypeRepository.existsById(10)).thenReturn(Mono.just(false));
 
-        StepVerifier.create(useCase.save(loanApplication))
+        StepVerifier.create(useCase.save(loanApplication, "123456"))
                 .expectError(BootcampInvalidLoanTypeException.class)
                 .verify();
     }
