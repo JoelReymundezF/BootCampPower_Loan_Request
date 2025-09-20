@@ -1,6 +1,7 @@
 package co.com.bancolombia.config;
 
 import co.com.bancolombia.model.loanapplication.gateways.LoanApplicationRepository;
+import co.com.bancolombia.model.loanapplication.gateways.LoanEventGateway;
 import co.com.bancolombia.model.loanapplication.gateways.UserExistsByDocumentPort;
 import co.com.bancolombia.model.loanstatus.gateways.LoanStatusRepository;
 import co.com.bancolombia.model.loantype.gateways.LoanTypeRepository;
@@ -56,9 +57,11 @@ public class UseCasesConfigTest {
         }
 
         @Bean
-        public MyUseCase myUseCase() {
-            return new MyUseCase();
+        public LoanEventGateway loanEventGateway() {
+            return Mockito.mock(LoanEventGateway.class);
         }
+
+
     }
 
     static class MyUseCase {

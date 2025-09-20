@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .authorizeExchange(auth -> auth
                         .pathMatchers(HttpMethod.POST, "/api/v1/loanApplications/**").hasRole("CUSTOMER")
                         .pathMatchers(HttpMethod.GET, "/api/v1/loanApplications/**").hasRole("ADVISER")
+                        .pathMatchers(HttpMethod.PUT, "/api/v1/loanApplications/**").hasRole("ADVISER")
                         .anyExchange().authenticated()
                 )
                 .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)

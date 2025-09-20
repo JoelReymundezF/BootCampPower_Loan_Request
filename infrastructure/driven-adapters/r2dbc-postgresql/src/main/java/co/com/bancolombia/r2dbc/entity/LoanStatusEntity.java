@@ -14,7 +14,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class LoanStatusEntity {
 
     @Id
-    @Column("id_status")
+    @Column("id")
     private Integer id;
 
     @Column("name")

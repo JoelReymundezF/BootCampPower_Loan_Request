@@ -28,6 +28,7 @@ subprojects {
     }
 
     dependencies {
+		implementation platform('software.amazon.awssdk:bom:2.32.13')
         implementation 'io.projectreactor:reactor-core'
         implementation 'io.projectreactor.addons:reactor-extra'
 
@@ -78,6 +79,15 @@ subprojects {
             xml.setOutputLocation layout.buildDirectory.file("reports/jacoco.xml")
             csv.setRequired false
             html.setOutputLocation layout.buildDirectory.dir("reports/jacocoHtml")
+        }
+        afterEvaluate {
+            classDirectories.setFrom(
+                    files(classDirectories.files.collect { fileTree(dir: it, exclude: [
+                            "com/tuempresa/paquete/excluido/**",
+                            "**/config/**",
+                            "**/*Test.class"
+                    ]) })
+            )
         }
     }
 

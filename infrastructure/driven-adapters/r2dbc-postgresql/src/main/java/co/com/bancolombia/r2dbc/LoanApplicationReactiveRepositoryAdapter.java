@@ -62,4 +62,9 @@ public class LoanApplicationReactiveRepositoryAdapter extends ReactiveAdapterOpe
     public Mono<Long> countByStatus(Integer status) {
         return repository.countByStatus(status);
     }
+
+    @Override
+    public Mono<LoanApplication> findById(Integer idLoan) {
+        return super.findById(idLoan);
+    }
 }

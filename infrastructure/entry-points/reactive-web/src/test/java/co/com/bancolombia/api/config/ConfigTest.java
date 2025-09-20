@@ -9,6 +9,7 @@ import co.com.bancolombia.usecase.loanapplication.LoanApplicationUseCase;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
@@ -16,9 +17,16 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
+import static org.mockito.ArgumentMatchers.eq;
+
 @ContextConfiguration(classes = {LoanApplicationRouterRest.class, LoanApplicationHandler.class})
 @WebFluxTest
 @Import({CorsConfig.class, SecurityHeadersConfig.class})
+@ImportAutoConfiguration(exclude = {
+        org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration.class,
+        org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration.class,
+        org.springframework.boot.autoconfigure.security.oauth2.client.reactive.ReactiveOAuth2ClientAutoConfiguration.class
+})
 class ConfigTest {
 
     @Autowired
@@ -35,7 +43,7 @@ class ConfigTest {
 
     @Test
     void corsConfigurationShouldAllowOrigins() {
-        Mockito.when(loanApplicationUseCase.save(Mockito.any()))
+        Mockito.when(loanApplicationUseCase.save(Mockito.any(),eq("123")))
                 .thenReturn(Mono.just(new LoanApplication()));
         webTestClient.post()
                 .uri("/api/v1/loanApplications")

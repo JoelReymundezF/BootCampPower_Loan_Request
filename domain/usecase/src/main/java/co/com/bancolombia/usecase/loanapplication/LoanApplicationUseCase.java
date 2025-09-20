@@ -2,15 +2,14 @@ package co.com.bancolombia.usecase.loanapplication;
 
 import co.com.bancolombia.model.loanapplication.LoanApplication;
 import co.com.bancolombia.model.loanapplication.PageResponse;
-import co.com.bancolombia.model.loanapplication.exceptions.BootcampInvalidDocumentException;
-import co.com.bancolombia.model.loanapplication.exceptions.BootcampInvalidLoanTypeException;
-import co.com.bancolombia.model.loanapplication.exceptions.BootcampPageSizeValidException;
-import co.com.bancolombia.model.loanapplication.exceptions.BootcampUnauthorizedUserException;
+import co.com.bancolombia.model.loanapplication.exceptions.*;
 import co.com.bancolombia.model.loanapplication.gateways.LoanApplicationRepository;
+import co.com.bancolombia.model.loanapplication.gateways.LoanEventGateway;
 import co.com.bancolombia.model.loanapplication.gateways.UserExistsByDocumentPort;
+import co.com.bancolombia.model.loanstatus.LoanStatusEnum;
+import co.com.bancolombia.model.loanstatus.gateways.LoanStatusRepository;
 import co.com.bancolombia.model.loantype.gateways.LoanTypeRepository;
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.Nullable;
 
@@ -21,14 +20,16 @@ public class LoanApplicationUseCase {
 
     private final LoanApplicationRepository loanApplicationRepository;
     private final LoanTypeRepository loanTypeRepository;
+    private final LoanStatusRepository loanStatusRepository;
     private final UserExistsByDocumentPort userPort;
+    private final LoanEventGateway loanEventGateway;
 
     public Mono<LoanApplication> save(LoanApplication loanApplication, String authenticatedUser) {//renombrar a save
         if (!authenticatedUser.equals(loanApplication.getIdentityDocument())) {
             return Mono.error(new BootcampUnauthorizedUserException());
         }
         Mono<Boolean> userExistsMono = userPort.userExistsByDocument(loanApplication.getIdentityDocument());
-        Mono<Boolean> loanTypeExistsMono =  loanTypeRepository.existsById(loanApplication.getIdLoanType());
+        Mono<Boolean> loanTypeExistsMono = loanTypeRepository.existsById(loanApplication.getIdLoanType());
 
         return Mono.zip(userExistsMono, loanTypeExistsMono)
                 .flatMap(tuple -> {
@@ -64,6 +65,31 @@ public class LoanApplicationUseCase {
                     return new PageResponse<>(content, totalElements, totalPages, page, size);
                 });
     }
+
+    public Mono<LoanApplication> updateLoanType(Integer idLoan, Integer idLoanStatus) {
+        if (!LoanStatusEnum.isApprovableStatus(idLoanStatus)) {
+            return Mono.error(new BootcampRuleException(BootcampRuleCode.INVALID_STATUS_UPDATE));
+        }
+
+        return loanApplicationRepository.findById(idLoan)
+                .switchIfEmpty(Mono.error(new BootcampRuleException(BootcampRuleCode.LOAN_NOT_FOUND)))
+                .flatMap(loan -> {
+                    loan.setIdLoanStatus(idLoanStatus);
+                    return loanStatusRepository.findById(idLoanStatus)
+                            .switchIfEmpty(Mono.error(new BootcampRuleException(BootcampRuleCode.LOAN_STATUS_NOT_FOUND)))
+                            .flatMap(loanStatus ->
+                                    loanApplicationRepository.save(loan)
+                                            .doOnSuccess(updated ->
+                                                    loanEventGateway.publishLoanStatusChanged(
+                                                            updated.getId().toString(),
+                                                            loanStatus.getName()
+                                                    )
+                                            )
+                            );
+                });
+    }
+
+
 
 
 }

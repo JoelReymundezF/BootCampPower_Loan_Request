@@ -8,4 +8,5 @@ import java.math.BigInteger;
 public interface LoanStatusRepository {
 
     Mono<Boolean> existsById(Integer id);
+    Mono<LoanStatus> findById(Integer id);
 }

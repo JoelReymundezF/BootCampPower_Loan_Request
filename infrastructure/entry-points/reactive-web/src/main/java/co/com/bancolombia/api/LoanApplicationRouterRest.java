@@ -7,8 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
-import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
@@ -25,6 +24,7 @@ public class LoanApplicationRouterRest {
     @Bean
     public RouterFunction<ServerResponse> routerFunction(LoanApplicationHandler handler) {
         return route(POST("/api/v1/loanApplications"), handler::listenSaveLoanApplication)
-                .andRoute(GET("/api/v1/loanApplications"), handler::listenListLoanApplication);
+                .andRoute(GET("/api/v1/loanApplications"), handler::listenListLoanApplication)
+                .andRoute(PUT("/api/v1/loanApplications"), handler::listenUpdateLoanType);
     }
 }

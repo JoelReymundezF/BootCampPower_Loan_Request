@@ -8,6 +8,7 @@ import co.com.bancolombia.model.loanapplication.LoanApplication;
 import co.com.bancolombia.usecase.loanapplication.LoanApplicationUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -18,9 +19,17 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockAuthentication;
+import org.springframework.security.authentication.TestingAuthenticationToken;
 
 @ContextConfiguration(classes = {LoanApplicationRouterRest.class, LoanApplicationHandler.class})
+@ImportAutoConfiguration(exclude = {
+        org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration.class,
+        org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration.class,
+        org.springframework.boot.autoconfigure.security.oauth2.client.reactive.ReactiveOAuth2ClientAutoConfiguration.class
+})
 @WebFluxTest
 class RouterRestTest {
 
@@ -54,21 +63,26 @@ class RouterRestTest {
             .idLoanStatus(2)
             .build();
 
-
     @Test
-    void testSaveLoanApplication() {
+    void testSaveLoanApplicationWithAuth() {
         LoanApplication loanApplication = LoanApplication.builder()
                 .id(1)
                 .identityDocument("123456789")
                 .build();
 
-        //no usar any usar lo que se requiere mapear
-        when(validationUtil.validate(any(CreateLoanApplicationDTO.class))).thenReturn(Mono.just(createLoanApplicationDTO));
-        when(loanApplicationMapper.toModel(any(CreateLoanApplicationDTO.class))).thenReturn(loanApplication);
-        when(loanApplicationUseCase.save(any())).thenReturn(Mono.just(loanApplication));
-        when(loanApplicationMapper.toResponse(any())).thenReturn(loanApplicationDTO);
+        // Configuración de mocks
+        when(validationUtil.validate(any(CreateLoanApplicationDTO.class)))
+                .thenReturn(Mono.just(createLoanApplicationDTO));
+        when(loanApplicationMapper.toModel(any(CreateLoanApplicationDTO.class)))
+                .thenReturn(loanApplication);
+        when(loanApplicationUseCase.save(any(), eq("testUser")))
+                .thenReturn(Mono.just(loanApplication));
+        when(loanApplicationMapper.toResponse(any()))
+                .thenReturn(loanApplicationDTO);
 
-        webTestClient.post()
+        // WebTestClient con autenticación simulada
+        webTestClient.mutateWith(mockAuthentication(new TestingAuthenticationToken("testUser", null)))
+                .post()
                 .uri("/api/v1/loanApplications")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(createLoanApplicationDTO)
@@ -78,6 +92,6 @@ class RouterRestTest {
                 .expectBody()
                 .jsonPath("$.code").isEqualTo("201_001")
                 .jsonPath("$.data.identityDocument").isEqualTo("123456789");
-    }
 
+    }
 }

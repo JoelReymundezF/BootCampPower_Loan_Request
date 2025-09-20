@@ -1,9 +1,6 @@
 package co.com.bancolombia.api;
 
-import co.com.bancolombia.model.loanapplication.exceptions.BootcampInvalidDocumentException;
-import co.com.bancolombia.model.loanapplication.exceptions.BootcampInvalidLoanTypeException;
-import co.com.bancolombia.model.loanapplication.exceptions.BootcampPageSizeValidException;
-import co.com.bancolombia.model.loanapplication.exceptions.BootcampUnauthorizedUserException;
+import co.com.bancolombia.model.loanapplication.exceptions.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.common.lang.NonNullApi;
 import jakarta.validation.ConstraintViolation;
@@ -27,6 +24,7 @@ import java.util.Map;
 @Order(-2)
 public class GlobalExceptionHandler implements WebExceptionHandler {
 
+    public static final String OK                = "200_001";
     public static final String CREATED                = "201_001";
     public static final String ERROR_VALIDATION       = "422_001";
     public static final String UNAUTHORIZED           = "401_001";
@@ -70,6 +68,10 @@ public class GlobalExceptionHandler implements WebExceptionHandler {
                 buildResponseBody(body, UNAUTHORIZED, ex.getMessage(), null);
             }
             case BootcampPageSizeValidException bootcampPageSizeValidException-> {
+                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
+                buildResponseBody(body, ERROR_VALIDATION, ex.getMessage(), null);
+            }
+            case BootcampRuleException bootcampRuleException-> {
                 exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
                 buildResponseBody(body, ERROR_VALIDATION, ex.getMessage(), null);
             }

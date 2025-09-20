@@ -2,6 +2,7 @@ package co.com.bancolombia.api;
 
 import co.com.bancolombia.api.dto.CreateLoanApplicationDTO;
 import co.com.bancolombia.api.dto.LoanApplicationDTO;
+import co.com.bancolombia.api.dto.UpdateLoanApplicationDTO;
 import co.com.bancolombia.api.helper.ApiResponse;
 import co.com.bancolombia.api.helper.validation.ValidationUtil;
 import co.com.bancolombia.api.mapper.LoanApplicationMapper;
@@ -160,6 +161,25 @@ public class LoanApplicationHandler {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(pageResponse)
                 );
+    }
+
+    public Mono<ServerResponse> listenUpdateLoanType(ServerRequest request) {
+        return request.bodyToMono(UpdateLoanApplicationDTO.class)
+                .flatMap(validationUtil::validate)
+                .flatMap(updateDTO -> loanApplicationUseCase.updateLoanType(updateDTO.getIdLoan(), updateDTO.getIdLoanStatus()))
+                .map(loanApplicationMapper::toResponse)
+                .flatMap(savedLoanApplicationDto -> {
+                    ApiResponse<LoanApplicationDTO> response = new ApiResponse<>(
+                            GlobalExceptionHandler.OK,
+                            savedLoanApplicationDto
+                    );
+                    return ServerResponse
+                            .status(HttpStatus.OK)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(response);
+                })
+                .doOnNext(dto -> log.info("Update loanType successfully"))
+                .doOnError(error -> log.error("Error while Update loanType: {}", error.getMessage(), error));
     }
 
 }

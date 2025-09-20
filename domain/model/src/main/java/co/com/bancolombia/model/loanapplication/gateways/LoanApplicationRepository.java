@@ -18,4 +18,5 @@ public interface LoanApplicationRepository {
 
     Mono<Long> countByStatus(Integer status);
 
+    Mono<LoanApplication> findById(Integer idLoan);
 }
