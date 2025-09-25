@@ -40,6 +40,7 @@ adapter:
   sqs:
     region: "us-east-2"
     queueUrl: "https://sqs.us-east-2.amazonaws.com/693014165658/notifications-queue"
+    queueDebtCapacityUrl: "https://sqs.us-east-2.amazonaws.com/693014165658/debt-capacity-queue"
     endpoint: "http://localhost:4566"
 resilience4j:
   circuitbreaker:
@@ -65,3 +66,12 @@ resilience4j:
 security:
   jwt:
     secret: "${JWT_SECRET}"
+entrypoint:
+  sqs:
+    region: "us-east-2"
+    endpoint: "http://localhost:4566"
+    queueUrl: "https://sqs.us-east-2.amazonaws.com/693014165658/sqs_loan_status_update"
+    waitTimeSeconds: 20
+    maxNumberOfMessages: 10
+    visibilityTimeoutSeconds: 10
+    numberOfThreads: 1

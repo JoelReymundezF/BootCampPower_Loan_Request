@@ -19,12 +19,22 @@ public class LoanApplicationRouterRest {
                     path = "/api/v1/loanApplications",
                     beanClass = LoanApplicationHandler.class,
                     beanMethod = "listenSaveLoanApplication"
+            ),
+            @RouterOperation(
+                    path = "/api/v1/loanApplications",
+                    beanClass = LoanApplicationHandler.class,
+                    beanMethod = "listenListLoanApplication"
+            ),
+            @RouterOperation(
+                    path = "/api/v1/loanApplications/status",
+                    beanClass = LoanApplicationHandler.class,
+                    beanMethod = "listenUpdateLoanStatus"
             )
     })
     @Bean
     public RouterFunction<ServerResponse> routerFunction(LoanApplicationHandler handler) {
         return route(POST("/api/v1/loanApplications"), handler::listenSaveLoanApplication)
                 .andRoute(GET("/api/v1/loanApplications"), handler::listenListLoanApplication)
-                .andRoute(PUT("/api/v1/loanApplications"), handler::listenUpdateLoanType);
+                .andRoute(PUT("/api/v1/loanApplications"), handler::listenUpdateLoanStatus);
     }
 }

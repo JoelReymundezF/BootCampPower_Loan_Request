@@ -23,6 +23,7 @@ public class SecurityConfig {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(auth -> auth
+                        .pathMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/webjars/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/v1/loanApplications/**").hasRole("CUSTOMER")
                         .pathMatchers(HttpMethod.GET, "/api/v1/loanApplications/**").hasRole("ADVISER")
                         .pathMatchers(HttpMethod.PUT, "/api/v1/loanApplications/**").hasRole("ADVISER")

@@ -36,4 +36,12 @@ public class LoanApplicationEntity {
 
     @Column("id_loan_type")
     private Integer idLoanType;
+
+    @Column("automatic_validation")
+    private Boolean automaticValidation = Boolean.FALSE;
+
+    @Column("term_months")
+    private Integer termMonths;
 }
+
+

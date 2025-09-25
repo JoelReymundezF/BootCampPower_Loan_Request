@@ -163,10 +163,46 @@ public class LoanApplicationHandler {
                 );
     }
 
-    public Mono<ServerResponse> listenUpdateLoanType(ServerRequest request) {
+    @Operation(
+            operationId = "listenUpdateLoanStatus",
+            summary = "Update loan status",
+            description = "Receives an UpdateLoanApplicationDTO object and updates the status of a loan application.",
+            requestBody = @RequestBody(
+                    required = true,
+                    description = "Loan application update data",
+                    content = @Content(schema = @Schema(implementation = UpdateLoanApplicationDTO.class))
+            ),
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "Loan status updated successfully",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class)
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "400",
+                            description = "Validation error",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class)
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "500",
+                            description = "Internal error",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class)
+                            )
+                    )
+            }
+    )
+    public Mono<ServerResponse> listenUpdateLoanStatus(ServerRequest request) {
         return request.bodyToMono(UpdateLoanApplicationDTO.class)
                 .flatMap(validationUtil::validate)
-                .flatMap(updateDTO -> loanApplicationUseCase.updateLoanType(updateDTO.getIdLoan(), updateDTO.getIdLoanStatus()))
+                .flatMap(updateDTO -> loanApplicationUseCase.updateLoanStatus(updateDTO.getIdLoan(), updateDTO.getIdLoanStatus()))
                 .map(loanApplicationMapper::toResponse)
                 .flatMap(savedLoanApplicationDto -> {
                     ApiResponse<LoanApplicationDTO> response = new ApiResponse<>(

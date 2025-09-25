@@ -33,4 +33,7 @@ public class CreateLoanApplicationDTO {
 
     @NotNull(message = "LoanType is required")
     private Integer idLoanType;
+
+    @NotNull(message = "Automatic validation is required")
+    private Boolean automaticValidation;
 }

@@ -19,4 +19,5 @@ public class LoanApplicationDTO {
     private String email;
     private Integer idLoanStatus;
     private Integer idLoanType;
+    private Boolean automaticValidation;
 }

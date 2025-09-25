@@ -16,4 +16,13 @@ public enum LoanStatusEnum {
     public static boolean isApprovableStatus(int id) {
         return id == APPROVED.id || id == REJECTED.id;
     }
+
+    public static int getIdFromName(String name) {
+        if (name == null) return -1;
+        try {
+            return LoanStatusEnum.valueOf(name.toUpperCase()).getId();
+        } catch (IllegalArgumentException e) {
+            return -1;
+        }
+    }
 }

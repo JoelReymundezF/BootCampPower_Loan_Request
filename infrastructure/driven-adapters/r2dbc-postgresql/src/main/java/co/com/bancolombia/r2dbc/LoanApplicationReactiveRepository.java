@@ -19,4 +19,7 @@ public interface LoanApplicationReactiveRepository extends ReactiveCrudRepositor
 
     @Query("SELECT COUNT(*) FROM loan_application WHERE id_loan_status = :status")
     Mono<Long> countByStatus(Integer status);
+
+    @Query("SELECT * FROM loan_application WHERE identity_document = :identityDocument and id_loan_status = :status")
+    Flux<LoanApplicationEntity> findAllByIdentityDocumentAndStatus(String identityDocument, Integer status);
 }

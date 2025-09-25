@@ -4,6 +4,7 @@ public enum BootcampRuleCode {
 
     LOAN_STATUS_NOT_FOUND("LOAN_STATUS_NOT_FOUND", "LoanStatus not found"),
     LOAN_NOT_FOUND("LOAN_NOT_FOUND", "Loan application not found"),
+    USER_NOT_FOUND("USER_NOT_FOUND", "User not found"),
     INVALID_STATUS_UPDATE("INVALID_STATUS_UPDATE", "You can only update to approved or rejected");
 
     private final String code;

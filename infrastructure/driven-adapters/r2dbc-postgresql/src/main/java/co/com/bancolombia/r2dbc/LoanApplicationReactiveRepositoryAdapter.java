@@ -67,4 +67,10 @@ public class LoanApplicationReactiveRepositoryAdapter extends ReactiveAdapterOpe
     public Mono<LoanApplication> findById(Integer idLoan) {
         return super.findById(idLoan);
     }
+
+    @Override
+    public Flux<LoanApplication> findAllByIdentityDocumentAndStatus(String identityDocument, Integer status) {
+        return repository.findAllByIdentityDocumentAndStatus(identityDocument, status)
+                .map(entity -> mapper.map(entity, LoanApplication.class));
+    }
 }

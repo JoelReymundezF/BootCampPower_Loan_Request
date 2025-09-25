@@ -6,4 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface LoanTypeRepository {
     Mono<Boolean> existsById(Integer id);
+    Mono<LoanType> findById(Integer id);
 }
